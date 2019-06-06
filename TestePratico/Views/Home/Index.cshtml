@@ -1,0 +1,90 @@
+﻿@model List<TestePratico.Models.Produto>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <style type="text/css">
+        .grid {
+            width: 100%;
+        }
+    </style>
+}
+
+<h2>Produtos</h2>
+<h2>Lista de Produtos</h2>
+<div style="width:100%;">
+
+    @{
+        WebGrid grid = new WebGrid(Model);
+        @grid.GetHtml(
+             tableStyle: "grid",
+             fillEmptyRows: false,
+             headerStyle: "gvHeading",
+             alternatingRowStyle: "gvAlternateRow",
+             rowStyle: "gvRow",
+             footerStyle: "gvFooter",
+             mode: WebGridPagerModes.All,
+             firstText: "<< Primeiro",
+             previousText: "< Anterior",
+             nextText: "Próximo >",
+             lastText: "Último >>",
+             columns: new[] {
+             grid.Column("Codigo", header: "Codigo"),
+             grid.Column("Nome", header: "Produto"),
+             grid.Column("Estoque", header: "Estoque"),
+             grid.Column("Preco", header: "Preco", style: "text-align-center",
+                                    format: (item) => string.Format("{0:C}", item.Preco))
+
+             })
+    }
+</div>
+<form id="saveProdutoForm" method="post">
+    <h3>Criar Produto</h3>
+    <p>
+        <label for="produtoCodigo">Produto Codigo:</label><br />
+        <input type="number" name="Codigo" required="required" />
+    </p>
+    <p>
+        <label for="produtoNome">Produto Nome:</label><br />
+        <input type="text" name="Nome" />
+    </p>
+    <p>
+        <label for="produtoEstoque">Produto Estoque:</label><br />
+        <input type="number" name="Estoque" />
+    </p>
+    <p>
+        <label for="produtoPreco">Produto Preço:</label><br />
+        <input type="number" name="Preco" />
+    </p>
+    <input type="button" id="saveProdutos" value="Salvar" />
+    <input type="button" id="alterarProdutos" value="Alterar Preco" />
+    <input type="button" id="alterarProdutos" value="Alterar Estoque" />
+</form>
+@section scripts{
+    <script>
+        $('#saveProdutos').click(function () {
+            $.post("api/produto",
+                $("#saveProdutoForm").serialize(),
+                "json"
+            );
+        });
+        $('#alterarProdutos').click(function () {
+            $.ajax({
+                url: 'api/alterapreco',
+                type: 'PUT',
+                data: $("#saveProdutoForm").serialize(),
+                success: function (response) {
+                }
+            });
+        });
+        $('#alterarEstoque').click(function () {
+            $.ajax({
+                url: 'api/alterarestoque',
+                type: 'PUT',
+                data: $("#saveProdutoForm").serialize(),
+                success: function (response) {
+                }
+            });
+        });
+    </script>
+}
